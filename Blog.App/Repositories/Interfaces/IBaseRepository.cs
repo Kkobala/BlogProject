@@ -12,6 +12,7 @@ namespace Blog.App.Repositories.Interfaces
         Task<AuthorEntity> GetAuthorById(int id);
         Task<BlogPostEntity> GetBlogById(int id);
         Task<List<BlogDTO>> GetAllBlogsAsync();
+        Task<List<BlogDTO>> SortBlogsAsync(string sortby, string filterByAuthor);
         Task SaveChanges();
     }
 }

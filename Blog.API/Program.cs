@@ -1,11 +1,15 @@
 using Blog.App.Auth;
 using Blog.App.Db;
+using Blog.App.Db.Entities;
+using Blog.App.Middlewares;
 using Blog.App.Repositories.Implementations;
 using Blog.App.Repositories.Interfaces;
 using Blog.App.Services.Implementation;
 using Blog.App.Services.Interfaces;
 using Blog.App.UnitOfWork.Implementations;
 using Blog.App.UnitOfWork.Interfaces;
+using Blog.App.Validations;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
@@ -33,6 +37,8 @@ AuthConfigurator.Configure(builder);
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBlogService, BlogServices>();
+builder.Services.AddScoped<IValidator<AuthorEntity>, AuthorValidations>();
+builder.Services.AddScoped<IValidator<BlogPostEntity>, BlogValidations>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -81,6 +87,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseMiddleware<ErrorHandleMiddlewares>();
 
 app.UseAuthorization();
 

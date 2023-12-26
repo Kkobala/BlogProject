@@ -1,4 +1,5 @@
 ﻿using Blog.App.BlogRequests;
+using Blog.App.Repositories.Interfaces;
 using Blog.App.Services.Interfaces;
 using Blog.App.UnitOfWork.Interfaces;
 using Microsoft.AspNetCore.Http;
@@ -12,13 +13,16 @@ namespace Blog.API.Controllers
     {
         private readonly IBlogService _blogService;
         private readonly IUnitOfWork _unitOfWork;
+        private readonly IBaseRepository _repo;
 
         public BlogController(
             IBlogService blogService,
-            IUnitOfWork unitOfWork)
+            IUnitOfWork unitOfWork,
+            IBaseRepository repo)
         {
             _blogService = blogService;
             _unitOfWork = unitOfWork;
+            _repo = repo;
         }
 
         [HttpPost("register-author")]
@@ -59,6 +63,12 @@ namespace Blog.API.Controllers
         public async Task<IActionResult> GetConcreteBlogById(int id)
         {
            return Ok(await _unitOfWork.BaseRepository.GetBlogById(id));
+        }
+
+        [HttpGet("sort-blogs")]
+        public async Task<IActionResult> SortBlogs(string sortby, string fitlerbyauthor)
+        {
+            return Ok(await _repo.SortBlogsAsync(sortby, fitlerbyauthor));
         }
     }
 }

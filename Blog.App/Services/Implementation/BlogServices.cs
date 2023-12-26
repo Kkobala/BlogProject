@@ -4,23 +4,23 @@ using Blog.App.Db.Entities;
 using Blog.App.Models;
 using Blog.App.Services.Interfaces;
 using Blog.App.UnitOfWork.Interfaces;
-using Blog.App.Validations;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 
 namespace Blog.App.Services.Implementation
 {
-    public class BlogServices: IBlogService
+    public class BlogServices : IBlogService
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly BlogDbContext _db;
-        private readonly AuthorValidations _authorRules;
-        private readonly BlogValidations _blogRules;
+        private readonly IValidator<AuthorEntity> _authorRules;
+        private readonly IValidator<BlogPostEntity> _blogRules;
 
         public BlogServices(
             IUnitOfWork unitOfWork,
             BlogDbContext db,
-            BlogValidations blogRules,
-            AuthorValidations authRules)
+            IValidator<BlogPostEntity> blogRules,
+            IValidator<AuthorEntity> authRules)
         {
             _unitOfWork = unitOfWork;
             _db = db;
@@ -38,7 +38,7 @@ namespace Blog.App.Services.Implementation
                 BirthDate = request.BirthDate
             };
 
-            var results = _authorRules.Validate(authorEntity);
+            var results = await _authorRules.ValidateAsync(authorEntity);
 
             if (!results.IsValid)
             {
@@ -47,6 +47,7 @@ namespace Blog.App.Services.Implementation
                     Console.WriteLine("Property " + failure.PropertyName + " failed validation. Error was: " + failure.ErrorMessage);
                 }
             }
+
             await _unitOfWork.BaseRepository.AddAuthor(authorEntity);
             await _unitOfWork.BaseRepository.SaveChanges();
 
@@ -77,7 +78,7 @@ namespace Blog.App.Services.Implementation
                 AuthorInformation = author
             };
 
-            var results = _blogRules.Validate(blogEntity);
+            var results = await _blogRules.ValidateAsync(blogEntity);
 
             if (!results.IsValid)
             {
@@ -119,7 +120,7 @@ namespace Blog.App.Services.Implementation
 
             var blog = new BlogDTO
             {
-                Title= request.Title,
+                Title = request.Title,
                 Content = request.Content,
                 ImageUrl = request.ImageUrl
             };

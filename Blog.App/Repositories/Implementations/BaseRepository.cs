@@ -4,10 +4,11 @@ using Blog.App.Db.Entities;
 using Blog.App.Models;
 using Blog.App.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 
 namespace Blog.App.Repositories.Implementations
 {
-    public class BaseRepository: IBaseRepository
+    public class BaseRepository : IBaseRepository
     {
         private readonly BlogDbContext _db;
 
@@ -39,7 +40,7 @@ namespace Blog.App.Repositories.Implementations
         public async Task<AuthorEntity> GetAuthorById(int id)
         {
             var author = await _db.Authors.FirstOrDefaultAsync(x => x.AuthorId == id)
-                ?? throw new Exception($"Account with {id} cannot be found"); 
+                ?? throw new Exception($"Account with {id} cannot be found");
 
             return author;
         }
@@ -63,6 +64,43 @@ namespace Blog.App.Repositories.Implementations
             var blogs = await _db.Blogs
             .Include(b => b.AuthorInformation)
             .ToListAsync();
+
+            return blogs.Select(blogEntity => new BlogDTO
+            {
+                AuthorId = blogEntity.AuthorId,
+                Title = blogEntity.Title,
+                Content = blogEntity.Content,
+                ImageUrl = blogEntity.ImageUrl,
+                Quotes = blogEntity.Quotes,
+                Conclusion = blogEntity.Conclusion,
+                AuthorInformation = blogEntity.AuthorInformation
+            }).ToList();
+        }
+
+        public async Task<List<BlogDTO>> SortBlogsAsync(string sortby, string filterByAuthor)
+        {
+            IQueryable<BlogPostEntity> query = _db.Blogs.Include(b => b.AuthorInformation);
+
+            if (!string.IsNullOrEmpty(filterByAuthor))
+            {
+                query = query.
+                    Where(x => x.AuthorInformation.Name.Contains(filterByAuthor) 
+                    || x.AuthorInformation.LastName.Contains(filterByAuthor));
+            }
+
+            switch (sortby)
+            {
+                case "Title":
+                    query = query.OrderBy(x => x.Title);
+                    break;
+
+                case "Author":
+                    query = query.OrderBy(x => x.AuthorInformation.Name)
+                                 .ThenBy(x => x.AuthorInformation.LastName);
+                    break;
+            }
+
+            var blogs = await query.ToListAsync();
 
             return blogs.Select(blogEntity => new BlogDTO
             {
