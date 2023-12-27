@@ -1,10 +1,10 @@
-﻿using Blog.App.Auth;
-using Blog.App.Auth.AuthRequests;
-using Blog.App.Db;
+﻿using Blog.API.Auth;
+using Blog.Infrastructure.Db;
 using Blog.App.Db.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Blog.API.AuthRequests;
 
 namespace Blog.API.Controllers
 {

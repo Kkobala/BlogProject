@@ -1,4 +1,4 @@
-﻿namespace Blog.App.Models
+﻿namespace Blog.Common.Models
 {
     public class AuthorDTO
     {

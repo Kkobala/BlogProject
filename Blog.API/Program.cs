@@ -1,18 +1,19 @@
-using Blog.App.Auth;
-using Blog.App.Db;
-using Blog.App.Db.Entities;
-using Blog.App.Middlewares;
-using Blog.App.Repositories.Implementations;
-using Blog.App.Repositories.Interfaces;
-using Blog.App.Services.Implementation;
-using Blog.App.Services.Interfaces;
-using Blog.App.UnitOfWork.Implementations;
-using Blog.App.UnitOfWork.Interfaces;
-using Blog.App.Validations;
+using Blog.API.Auth;
+using Blog.Domain.Entities;
+using Blog.Common.Middlewares;
+using Blog.Infrastructure.Repositories.Implementations;
+using Blog.Infrastructure.Repositories.Interfaces;
+using Blog.API.Services.Implementation;
+using Blog.API.Services.Interfaces;
+using Blog.Infrastructure.UnitOfWork.Implementations;
+using Blog.Infrastructure.UnitOfWork.Interfaces;
+using Blog.Common.Validations;
 using FluentValidation;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Serilog;
+using Blog.Infrastructure.Db;
+using Blog.Common.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -37,8 +38,8 @@ AuthConfigurator.Configure(builder);
 builder.Services.AddScoped<IBaseRepository, BaseRepository>();
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IBlogService, BlogServices>();
-builder.Services.AddScoped<IValidator<AuthorEntity>, AuthorValidations>();
-builder.Services.AddScoped<IValidator<BlogPostEntity>, BlogValidations>();
+builder.Services.AddScoped<IValidator<AuthorDTO>, AuthorValidations>();
+builder.Services.AddScoped<IValidator<BlogDTO>, BlogValidations>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle

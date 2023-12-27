@@ -1,9 +1,10 @@
-﻿using Blog.App.BlogRequests;
-using Blog.App.Repositories.Interfaces;
-using Blog.App.Services.Interfaces;
-using Blog.App.UnitOfWork.Interfaces;
+﻿using Blog.API.BlogRequests;
+using Blog.Infrastructure.Repositories.Interfaces;
+using Blog.API.Services.Interfaces;
+using Blog.Infrastructure.UnitOfWork.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Blog.API.Controllers
 {
@@ -25,6 +26,7 @@ namespace Blog.API.Controllers
             _repo = repo;
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpPost("register-author")]
         public async Task<IActionResult> RegisterAuthor(RegisterAuthorRequest request)
         {
@@ -32,6 +34,7 @@ namespace Blog.API.Controllers
             return Ok(author);
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpPost("create-blog-post")]
         public async Task<IActionResult> CreateBlog(CreateBlogRequest request)
         {
@@ -39,6 +42,7 @@ namespace Blog.API.Controllers
             return Ok(blog);
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpPut("update-blog-post")]
         public async Task<IActionResult> UpdateBlog(UpdateBlogRequest request)
         {
@@ -46,6 +50,7 @@ namespace Blog.API.Controllers
             return Ok(blog);
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpDelete("delete-blog-post")]
         public async Task<IActionResult> DeleteBlog(RemoveBlogRequest request)
         {
@@ -53,18 +58,21 @@ namespace Blog.API.Controllers
             return Ok("Blog deleted successfully");
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpGet("get-all-blogs")]
         public async Task<IActionResult> GetAllBlogs()
         {
            return Ok(await _unitOfWork.BaseRepository.GetAllBlogsAsync());
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpGet("get-concrete-blog-by-id")]
         public async Task<IActionResult> GetConcreteBlogById(int id)
         {
            return Ok(await _unitOfWork.BaseRepository.GetBlogById(id));
         }
 
+        [Authorize(Policy = "ApiUser", AuthenticationSchemes = "Bearer")]
         [HttpGet("sort-blogs")]
         public async Task<IActionResult> SortBlogs(string sortby, string fitlerbyauthor)
         {

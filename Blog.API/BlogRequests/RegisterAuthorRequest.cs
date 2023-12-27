@@ -1,6 +1,6 @@
-﻿namespace Blog.App.Models
+﻿namespace Blog.API.BlogRequests
 {
-    public class AuthorDTO
+    public class RegisterAuthorRequest
     {
         public string Name { get; set; }
         public string LastName { get; set; }
